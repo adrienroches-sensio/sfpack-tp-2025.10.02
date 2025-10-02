@@ -10,6 +10,10 @@ final class EventDispatcher
     {
         $this->listeners[$eventName] ??= [];
 
+        if ($listener instanceof EventListenerInterface) {
+            $listener = $listener->handle(...);
+        }
+
         $this->listeners[$eventName][] = [$listener, $priority];
     }
 
@@ -31,11 +35,6 @@ final class EventDispatcher
         });
 
         foreach ($listeners as [$listener]) {
-            if ($listener instanceof EventListenerInterface) {
-                $listener->handle($event, $name);
-                continue;
-            }
-
             $listener($event, $name);
         }
     }
