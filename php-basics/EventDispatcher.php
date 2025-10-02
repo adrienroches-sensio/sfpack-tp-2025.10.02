@@ -19,6 +19,10 @@ final class EventDispatcher
 
         $listeners = $this->listeners[$name] ?? [];
 
+        if ([] === $listeners) {
+            throw NoListenersException::forEvent($name);
+        }
+
         foreach ($listeners as $listener) {
             if ($listener instanceof EventListenerInterface) {
                 $listener->handle($event, $name);
