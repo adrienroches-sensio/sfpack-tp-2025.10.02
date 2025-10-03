@@ -11,11 +11,17 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class MainController extends AbstractController
 {
-    #[Route('/', name: 'app_index', methods: ['GET'])]
+    #[Route('/', name: 'app_main_index', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $name = $request->query->get('name', 'World');
 
         return new Response("Hello {$name}!");
+    }
+
+    #[Route('/contact', name: 'app_main_contact')]
+    public function contact(): Response
+    {
+        return new Response('Contact');
     }
 }
