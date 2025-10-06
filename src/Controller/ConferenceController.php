@@ -20,13 +20,23 @@ class ConferenceController extends AbstractController
     #[Route(
         path: '/conference/new',
         name: 'app_conference_new',
-        methods: ['GET'],
+        methods: ['GET', 'POST'],
     )]
     public function newConference(
+        Request $request,
+        EntityManagerInterface $entityManager,
     ): Response {
         $conference = new Conference();
 
         $form = $this->createForm(ConferenceType::class, $conference);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->persist($conference);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_conference_list');
+        }
 
         return $this->render('conference/new.html.twig', [
             'form' => $form,
