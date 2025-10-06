@@ -159,6 +159,11 @@ class Conference
         return $this;
     }
 
+    public function hasOrganizations(): bool
+    {
+        return count($this->getOrganizations()) > 0;
+    }
+
     /**
      * @return Collection<int, Organization>
      */
