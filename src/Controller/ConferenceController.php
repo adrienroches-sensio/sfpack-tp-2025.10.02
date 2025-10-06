@@ -70,14 +70,9 @@ class ConferenceController extends AbstractController
             $conferences = $conferenceRepository->list();
         }
 
-        $content = array_map(function (Conference $conference): array {
-            return [
-                'id' => $conference->getId(),
-                'name' => $conference->getName(),
-            ];
-        }, $conferences);
-
-        return $this->json($content);
+        return $this->render('conference/list.html.twig', [
+            'conferences' => $conferences,
+        ]);
     }
 
     #[Route(
@@ -90,9 +85,8 @@ class ConferenceController extends AbstractController
     )]
     public function show(Conference $conference): Response
     {
-        return $this->json([
-            'id' => $conference->getId(),
-            'name' => $conference->getName(),
+        return $this->render('conference/show.html.twig', [
+            'conference' => $conference,
         ]);
     }
 }
