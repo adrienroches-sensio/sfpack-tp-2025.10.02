@@ -12,23 +12,30 @@ class AppFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        $organization = $this->createOrganization();
-        $manager->persist($organization);
+        $sensiolabs = $this->createOrganization('SensioLabs');
+        $manager->persist($sensiolabs);
+
+        $symfony = $this->createOrganization('Symfony SAS');
+        $manager->persist($symfony);
 
         for ($i = 15; $i <= 25; $i++) {
             $conference = $this->createConference($i);
-            $conference->addOrganization($organization);
+            $conference->addOrganization($sensiolabs);
+            $conference->addOrganization($symfony);
 
             $manager->persist($conference);
         }
 
+        $conferenceWithoutOrganization = $this->createConference(26);
+        $manager->persist($conferenceWithoutOrganization);
+
         $manager->flush();
     }
 
-    private function createOrganization(): Organization
+    private function createOrganization(string $name): Organization
     {
         $organization = new Organization();
-        $organization->setName('SensioLabs');
+        $organization->setName($name);
         $organization->setPresentation('Creator of Symfony !');
         $organization->setCreatedAt(new DateTimeImmutable('2010-05-12'));
 
