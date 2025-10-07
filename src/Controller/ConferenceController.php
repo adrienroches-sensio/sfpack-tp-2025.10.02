@@ -12,6 +12,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,11 +36,21 @@ class ConferenceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($conference);
-            $entityManager->flush();
-
             $event = new ConferenceSubmittedEvent($conference);
             $eventDispatcher->dispatch($event);
+
+            if (!$event->isRejected()) {
+                $entityManager->persist($conference);
+                $entityManager->flush();
+            } else {
+                foreach ($event->getRejectReasons() as $reason) {
+                    $form->addError(new FormError($reason));
+                }
+
+                return $this->render('conference/new.html.twig', [
+                    'form' => $form,
+                ]);
+            }
 
             return $this->redirectToRoute('app_conference_list');
         }
