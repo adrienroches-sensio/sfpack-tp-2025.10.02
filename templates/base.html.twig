@@ -15,7 +15,7 @@
         {% block body %}
             {% block header %}
                 <header>
-                    {{ include('includes/_navbar.html.twig') }}
+                    {{ include('includes/_navbar.html.twig', with_context: false) }}
                 </header>
             {% endblock header %}
 

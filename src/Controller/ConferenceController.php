@@ -8,6 +8,7 @@ use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Search\ConferenceSearchInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,5 +70,23 @@ class ConferenceController extends AbstractController
         return $this->render('conference/show.html.twig', [
             'conference' => $conference,
         ]);
+    }
+
+    #[Route(
+        path: '/conference/search',
+        name: 'app_conference_search',
+        methods: ['GET'],
+    )]
+    #[Template('conference/search.html.twig')]
+    public function search(Request $request, ConferenceSearchInterface $conferenceSearch): array
+    {
+        $name = $request->query->getString('name', '');
+
+        $conferences = $conferenceSearch->searchByName($name);
+
+        return [
+            'conferences' => $conferences,
+            'nameQuery' => $name,
+        ];
     }
 }

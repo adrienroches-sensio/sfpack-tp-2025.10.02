@@ -11,7 +11,7 @@
             </div>
             <div class="row gx-5 justify-content-center">
                 <div class="col-lg-6">
-                    {{ include('includes/_contact_form.html.twig')}}
+                    {{ include('includes/_contact_form.html.twig', {'form': form}, with_context: false)}}
                 </div>
             </div>
         </div>
