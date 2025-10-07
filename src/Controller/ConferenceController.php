@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Conference\ConferenceSubmittedEvent;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Search\ConferenceSearchInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -25,6 +27,7 @@ class ConferenceController extends AbstractController
     public function newConference(
         Request $request,
         EntityManagerInterface $entityManager,
+        EventDispatcherInterface $eventDispatcher,
     ): Response {
         $conference = new Conference();
 
@@ -34,6 +37,9 @@ class ConferenceController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($conference);
             $entityManager->flush();
+
+            $event = new ConferenceSubmittedEvent($conference);
+            $eventDispatcher->dispatch($event);
 
             return $this->redirectToRoute('app_conference_list');
         }
