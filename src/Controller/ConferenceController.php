@@ -8,6 +8,7 @@ use App\Conference\ConferenceSubmittedEvent;
 use App\Entity\Conference;
 use App\Form\ConferenceType;
 use App\Search\ConferenceSearchInterface;
+use App\Security\ConferencePermissions;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
@@ -75,6 +76,8 @@ class ConferenceController extends AbstractController
     )]
     public function editConference(Request $request, Conference $conference, EntityManagerInterface $em): Response
     {
+        $this->denyAccessUnlessGranted(ConferencePermissions::EDIT, $conference);
+
         $form = $this->createForm(ConferenceType::class, $conference);
         $form->handleRequest($request);
 
