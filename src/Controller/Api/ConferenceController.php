@@ -8,9 +8,11 @@ use App\Entity\Conference;
 use App\Entity\Organization;
 use App\Entity\User;
 use App\Repository\ConferenceRepository;
+use App\Security\ConferencePermissions;
 use Doctrine\Common\Collections\Collection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 
@@ -70,6 +72,7 @@ final class ConferenceController
         name: 'api_conferences_list',
         methods: ['GET'],
     )]
+    #[IsGranted(ConferencePermissions::LIST)]
     public function list(): JsonResponse
     {
         $conferences = $this->conferenceRepository->list();

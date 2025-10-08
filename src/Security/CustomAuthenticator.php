@@ -25,23 +25,20 @@ class CustomAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        // return $request->headers->has('X-AUTH-TOKEN');
+        return $request->headers->has('X-AUTH-TOKEN');
     }
 
     public function authenticate(Request $request): Passport
     {
-        // $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        // if (null === $apiToken) {
-        // The token header was empty, authentication fails with HTTP Status
-        // Code 401 "Unauthorized"
-        // throw new CustomUserMessageAuthenticationException('No API token provided');
-        // }
+        $apiToken = $request->headers->get('X-AUTH-TOKEN');
+        if (null === $apiToken) {
+            throw new CustomUserMessageAuthenticationException('No API token provided');
+        }
 
-        // implement your own logic to get the user identifier from `$apiToken`
-        // e.g. by looking up a user in the database using its API key
-        // $userIdentifier = /** ... */;
+        // THIS IS A MAJOR SECURITY ISSUE !!!!!!!!!⚠️☢️
+        $userIdentifier = $apiToken;
 
-        // return new SelfValidatingPassport(new UserBadge($userIdentifier));
+        return new SelfValidatingPassport(new UserBadge($userIdentifier));
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
