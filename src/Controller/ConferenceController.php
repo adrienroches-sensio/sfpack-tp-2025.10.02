@@ -13,7 +13,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Symfony\Bridge\Twig\Attribute\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\ExpressionLanguage\Expression;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -28,7 +27,7 @@ class ConferenceController extends AbstractController
         name: 'app_conference_new',
         methods: ['GET', 'POST'],
     )]
-    #[IsGranted(new Expression('is_granted("ROLE_WEBSITE") or is_granted("ROLE_ORGANIZER")'))]
+    #[IsGranted(ConferencePermissions::NEW)]
     public function newConference(
         Request $request,
         EntityManagerInterface $entityManager,
@@ -74,10 +73,9 @@ class ConferenceController extends AbstractController
         ],
         methods: ['GET', 'POST'],
     )]
+    #[IsGranted(ConferencePermissions::EDIT, 'conference')]
     public function editConference(Request $request, Conference $conference, EntityManagerInterface $em): Response
     {
-        $this->denyAccessUnlessGranted(ConferencePermissions::EDIT, $conference);
-
         $form = $this->createForm(ConferenceType::class, $conference);
         $form->handleRequest($request);
 

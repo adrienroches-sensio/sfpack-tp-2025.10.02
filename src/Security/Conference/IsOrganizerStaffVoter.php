@@ -4,15 +4,13 @@ declare(strict_types=1);
 
 namespace App\Security\Conference;
 
-use App\Entity\Conference;
 use App\Security\ConferencePermissions;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\Vote;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
-use function str_starts_with;
 
-final class IsWebsiteStaffVoter implements VoterInterface
+final class IsOrganizerStaffVoter implements VoterInterface
 {
     public function __construct(
         private readonly AuthorizationCheckerInterface $authorizationChecker,
@@ -23,18 +21,14 @@ final class IsWebsiteStaffVoter implements VoterInterface
     {
         [$attribute] = $attributes;
 
-        if (! str_starts_with($attribute, 'conference/')) {
+        if ( $attribute !== ConferencePermissions::NEW) {
             return self::ACCESS_ABSTAIN;
         }
 
-        if ( $attribute === ConferencePermissions::EDIT && ! $subject instanceof Conference) {
-            return self::ACCESS_ABSTAIN;
-        }
+        $isRoleOrganizer = $this->authorizationChecker->isGranted('ROLE_ORGANIZER');
 
-        $isRoleWebsite = $this->authorizationChecker->isGranted('ROLE_WEBSITE');
-
-        if (false === $isRoleWebsite) {
-            $vote?->addReason('User is not a website staff.');
+        if (false === $isRoleOrganizer) {
+            $vote?->addReason('User is not an organizer.');
 
             return self::ACCESS_ABSTAIN;
         }
