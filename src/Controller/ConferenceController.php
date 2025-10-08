@@ -75,7 +75,9 @@ class ConferenceController extends AbstractController
     )]
     public function editConference(Request $request, Conference $conference, EntityManagerInterface $em): Response
     {
-        $form = $this->createForm(ConferenceType::class, $conference);
+        $form = $this->createForm(ConferenceType::class, $conference, [
+            'validation_groups' => 'edit'
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
