@@ -4,11 +4,13 @@ namespace App\DataFixtures;
 
 use App\Entity\Conference;
 use App\Entity\Organization;
+use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 
-class AppFixtures extends Fixture
+class AppFixtures extends Fixture implements DependentFixtureInterface
 {
     public function load(ObjectManager $manager): void
     {
@@ -23,10 +25,14 @@ class AppFixtures extends Fixture
             $conference->addOrganization($sensiolabs);
             $conference->addOrganization($symfony);
 
+            $conference->setCreatedBy($this->getUser('nobody'));
+
             $manager->persist($conference);
         }
 
         $conferenceWithoutOrganization = $this->createConference(26);
+        $conferenceWithoutOrganization->setCreatedBy($this->getUser('admin'));
+
         $manager->persist($conferenceWithoutOrganization);
 
         $manager->flush();
@@ -54,5 +60,15 @@ class AppFixtures extends Fixture
         $conference->setAccessible(true);
 
         return $conference;
+    }
+
+    private function getUser(string $username): User
+    {
+        return $this->getReference($username, User::class);
+    }
+
+    public function getDependencies(): array
+    {
+        return [UserFixtures::class];
     }
 }
