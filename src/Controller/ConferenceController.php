@@ -39,6 +39,8 @@ class ConferenceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $conference->setCreatedBy($this->getUser());
+
             $event = new ConferenceSubmittedEvent($conference);
             $eventDispatcher->dispatch($event);
 
