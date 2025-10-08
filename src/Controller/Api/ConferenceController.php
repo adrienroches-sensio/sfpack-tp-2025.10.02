@@ -64,4 +64,20 @@ final class ConferenceController
 
         return new JsonResponse($json, json: true);
     }
+
+    #[Route(
+        path: '/api/conferences',
+        name: 'api_conferences_list',
+        methods: ['GET'],
+    )]
+    public function list(): JsonResponse
+    {
+        $conferences = $this->conferenceRepository->list();
+
+        $json = $this->serializer->serialize($conferences, 'json', [
+            'groups' => ['conference:list']
+        ]);
+
+        return new JsonResponse($json, json: true);
+    }
 }

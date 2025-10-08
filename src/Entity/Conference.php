@@ -7,38 +7,46 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ConferenceRepository::class)]
 class Conference
 {
+    #[Groups(['conference:list'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['conference:list'])]
     #[Assert\NotNull(groups: ['Default', 'edit'])]
     #[Assert\Length(min: 10, groups: ['Default', 'edit'])]
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[Groups(['conference:list'])]
     #[Assert\NotNull(groups: ['Default', 'edit'])]
     #[Assert\Length(min: 30, groups: ['Default', 'edit'])]
     #[ORM\Column(type: Types::TEXT)]
     private ?string $description = null;
 
+    #[Groups(['conference:list'])]
     #[ORM\Column]
     private bool $accessible = false;
 
+    #[Groups(['conference:list'])]
     #[Assert\Length(min: 20, groups: ['Default', 'edit'])]
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $prerequisites = null;
 
+    #[Groups(['conference:list'])]
     #[Assert\NotNull(groups: ['Default', 'edit'])]
     #[Assert\GreaterThanOrEqual(value: 'today', groups: ['Default'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $startAt = null;
 
+    #[Groups(['conference:list'])]
     #[Assert\NotNull(groups: ['Default', 'edit'])]
     #[Assert\GreaterThanOrEqual(propertyPath: 'startAt', groups: ['Default', 'edit'])]
     #[ORM\Column]
@@ -47,15 +55,18 @@ class Conference
     /**
      * @var Collection<int, Volunteering>
      */
+    #[Groups(['conference:list'])]
     #[ORM\OneToMany(targetEntity: Volunteering::class, mappedBy: 'conference')]
     private Collection $volunteerings;
 
     /**
      * @var Collection<int, Organization>
      */
+    #[Groups(['conference:list'])]
     #[ORM\ManyToMany(targetEntity: Organization::class, inversedBy: 'conferences')]
     private Collection $organizations;
 
+    #[Groups(['conference:list'])]
     #[ORM\ManyToOne(inversedBy: 'conferences')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $createdBy = null;

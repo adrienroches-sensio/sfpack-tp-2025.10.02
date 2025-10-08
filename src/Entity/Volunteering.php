@@ -4,18 +4,22 @@ namespace App\Entity;
 
 use App\Repository\VolunteeringRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Entity(repositoryClass: VolunteeringRepository::class)]
 class Volunteering
 {
+    #[Groups(['conference:list'])]
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    #[Groups(['conference:list'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $startAt = null;
 
+    #[Groups(['conference:list'])]
     #[ORM\Column]
     private ?\DateTimeImmutable $endAt = null;
 
