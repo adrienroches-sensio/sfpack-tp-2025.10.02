@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ConferenceType extends AbstractType
@@ -40,6 +41,16 @@ class ConferenceType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Conference::class,
+            'validation_groups' => function (FormInterface $form): array {
+                /** @var Conference $data */
+                $data = $form->getData();
+
+                if ($data->getId()) {
+                    return ['edit'];
+                }
+
+                return ['Default'];
+            }
         ]);
     }
 }
